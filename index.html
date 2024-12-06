@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TG - @CRICSPORTCENTRAL</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    #video {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <video id="video" controls></video>
+
+  <select id="qualitySelect">
+    <!-- Only one quality option now, named "Source" -->
+    <option value="http://46.229.253.219/live/green123/green123/415534.m3u8?token=ShJcU0BbQQNHDgMPDwEMC1oGBwRfAQFWCFRVAwMHAQUFBQdWUAJRCwQbGBpEF0dcWF1vWQIXXlUAV1cEUUgRR0JVRm1aV0EDRwwNCQFVBxsVEkRZC1BGWwFOQEcMABEIEwMBBQEBUgtHFRZdTxdQS1dRXG8CUBIIUgdADQsRX14dEltcbFcGVARXUBoNQQQbFRJZQxYXXg9EDg4bRwZaRkNRQFcRCUEIVgADGhtBVlZMXkRCHxdeQ2QjQBtHAUtGVF5HW1xdQQNHVAdND0EZG1BDb0IDRhATVAMPUhdGCRABEhgQXlIbZgZWWlZSAEFQVl5DElwXVUMdQA9YCw1HXUNvRFtXEVkbVgwDDAVWDRtE">Source</option>
+  </select>
+
+  <script>
+    var video = document.getElementById('video');
+    var qualitySelect = document.getElementById('qualitySelect');
+
+    qualitySelect.addEventListener('change', function() {
+      var selectedSource = qualitySelect.options[qualitySelect.selectedIndex].value;
+      var hls = new Hls();
+      if (Hls.isSupported()) {
+        hls.loadSource(selectedSource);
+        hls.attachMedia(video);
+      } else {
+        video.src = selectedSource;
+        video.play();
+      }
+    });
+
+    qualitySelect.dispatchEvent(new Event('change')); // Load default source
+  </script>
+
+  <script>
+    if (confirm("Join Our Telegram Channel @CRICSPORTCENTRAL For More Links")) {
+      window.location.href = "https://t.me/CRICSPORTCENTRAL";
+    }
+  </script>
+
+  <div style="background-color: #0074d9; text-align: center; padding: 10px;">
+    <a href="https://telegram.me/CRICSPORTCENTRAL" target="_blank">
+      <button id="joinTelegramButton" style="background-color: #fff; color: #0074d9; border: 2px solid #0074d9; padding: 5px 10px;">Join
+        Telegram</button>
+    </a>
+  </div>
+</body>
+</html>
