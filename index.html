@@ -13,30 +13,58 @@
   </style>
 </head>
 <body>
-  <video id="video" controls></video>
+  <video id="video" controls autoplay></video>
 
   <select id="qualitySelect">
-    <!-- Only one quality option now, named "Source" -->
-    <option value="http://46.229.253.219/live/green123/green123/415534.m3u8?token=ShJcU0BbQQNHDgMPDwEMC1oGBwRfAQFWCFRVAwMHAQUFBQdWUAJRCwQbGBpEF0dcWF1vWQIXXlUAV1cEUUgRR0JVRm1aV0EDRwwNCQFVBxsVEkRZC1BGWwFOQEcMABEIEwMBBQEBUgtHFRZdTxdQS1dRXG8CUBIIUgdADQsRX14dEltcbFcGVARXUBoNQQQbFRJZQxYXXg9EDg4bRwZaRkNRQFcRCUEIVgADGhtBVlZMXkRCHxdeQ2QjQBtHAUtGVF5HW1xdQQNHVAdND0EZG1BDb0IDRhATVAMPUhdGCRABEhgQXlIbZgZWWlZSAEFQVl5DElwXVUMdQA9YCw1HXUNvRFtXEVkbVgwDDAVWDRtE">Source</option>
+    <option value="auto">Auto</option>
   </select>
 
   <script>
-    var video = document.getElementById('video');
-    var qualitySelect = document.getElementById('qualitySelect');
+    const masterM3u8Url = "YOUR_MASTER_M3U8_URL_HERE"; // Replace with your master m3u8 URL
 
-    qualitySelect.addEventListener('change', function() {
-      var selectedSource = qualitySelect.options[qualitySelect.selectedIndex].value;
-      var hls = new Hls();
+    const video = document.getElementById('video');
+    const qualitySelect = document.getElementById('qualitySelect');
+
+    if (masterM3u8Url) {
       if (Hls.isSupported()) {
-        hls.loadSource(selectedSource);
+        const hls = new Hls();
+
+        hls.loadSource(masterM3u8Url);
         hls.attachMedia(video);
+
+        // Populate quality options when the manifest is parsed
+        hls.on(Hls.Events.MANIFEST_PARSED, function (_, data) {
+          // Populate the quality selector with available levels
+          data.levels.forEach((level, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `${level.height}p (${Math.round(level.bitrate / 1000)} kbps)`;
+            qualitySelect.appendChild(option);
+          });
+
+          // Set to "Auto" (default) quality
+          hls.currentLevel = -1; // -1 means auto quality
+        });
+
+        // Listen for quality selection changes
+        qualitySelect.addEventListener('change', function () {
+          const selectedQuality = qualitySelect.value;
+
+          if (selectedQuality === "auto") {
+            hls.currentLevel = -1; // Auto quality
+          } else {
+            hls.currentLevel = parseInt(selectedQuality); // Set selected quality
+          }
+        });
       } else {
-        video.src = selectedSource;
+        // Fallback for browsers that don't support Hls.js
+        video.src = masterM3u8Url;
         video.play();
       }
-    });
-
-    qualitySelect.dispatchEvent(new Event('change')); // Load default source
+    } else {
+      // If no master URL is provided, show an error message
+      document.body.innerHTML = '<p style="color: red; text-align: center;">No master m3u8 URL provided. Update the script with your URL.</p>';
+    }
   </script>
 
   <script>
@@ -47,8 +75,9 @@
 
   <div style="background-color: #0074d9; text-align: center; padding: 10px;">
     <a href="https://telegram.me/CRICSPORTCENTRAL" target="_blank">
-      <button id="joinTelegramButton" style="background-color: #fff; color: #0074d9; border: 2px solid #0074d9; padding: 5px 10px;">Join
-        Telegram</button>
+      <button id="joinTelegramButton" style="background-color: #fff; color: #0074d9; border: 2px solid #0074d9; padding: 5px 10px;">
+        Join Telegram
+      </button>
     </a>
   </div>
 </body>
